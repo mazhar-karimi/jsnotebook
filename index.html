@@ -6,53 +6,68 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
     <script>
+        function PrintText() {
+
+        }
+
+        function insertAfter(el, referenceNode) {
+            referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
+        }
 
         function Execute(code_ele) {
-            var code = code_ele.innerText;
-            var eval_code = eval(code);
-            var output1 = document.getElementById('output1');
-            output1.innerHTML = output1;
+          
+            var code = code_ele.parentElement.parentElement.children[1].innerText;
+            var eval_code_output = eval(code);             
 
-            output1.parentElement.lastChild|
+            var row = null;
 
-            /*
 
-            <div class="row">
-                <div class="command col-x-6">
-                    <span class="fa fa-remove" onclick="Clearoutput(this)">
-                    </span>
-                </div>
-                <div class="output col-x-6" id="output1">
-                </div>
-            </div>
+            //!code_ele.parentElement.parentElement.nextSibling.classList.contains('output-div')
+            if (code_ele.parentElement.parentElement.nextSibling.classList == undefined) {
+                row  = document.createElement('row');
+                row.classList.add('row')
+                row.classList.add('output-div')
 
-            */
+                var div1 = document.createElement('div');
+                div1.classList.add('command');
+                div1.classList.add('col-6');
 
+                var span1 = document.createElement('span');
+                span1.classList.add('fa');
+                span1.classList.add('fa-remove');
+                span1.onclick = Clearoutput(this);
+
+                div1.appendChild(span1);
+                row.appendChild(div1);
+
+                var div2 = document.createElement('div');
+                div2.classList.add('output');
+                div2.classList.add('col-6');
+                div2.innerText = eval_code_output;
+                row.appendChild(div2);
+
+                insertAfter(row, code_ele.parentElement.parentElement);
+            }
+            else
+            {
+                row = code_ele.parentElement.parentElement.nextSibling;
+                row.children[1].innerText = eval_code_output;
+            }
+           
         }
-
         function DeleteCell() {
-
         }
-
         function Clearoutput(ele) {
             ele.innerHTML = "";
             console.log(ele);
         }
-
         var selected_cell = null;
-
         function Click_Up() {
-
         }
-
         function Click_Down() {
-
         }
-
         function Click_Plus() {
-
         }
-
     </script>
 
     <style>
@@ -61,13 +76,13 @@
             border: solid 1px orange;
             font-size: 18px;
             font-family: sans-serif;
-            width:100%;
+            width: 100%;
         }
 
         .text {
             border: 0.5px solid gray;
-            width:100%;
-            font-size:32px;
+            width: 100%;
+            font-size: 32px;
         }
 
         .btn {
@@ -80,8 +95,7 @@
 <body>
     <div class="container">
         <div class="row">
-
-            <div class="col-x-12">
+            <div class="col-12">
                 <div class="btn-toolbar">
                     <div class="btn-group">
                         <button class="btn" data-original-title="Bold - Ctrl+B"><i class="fa fa-floppy-o"></i></button>
@@ -97,36 +111,25 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-x-1">
-                <div class="col-x-1 command">
-                    <span class="" onclick="Execute(this)">
-                        &nbsp;
-                    </span>
-                </div>
-                <div class="col-x-11 text" id="code1" contenteditable="true">
-                    This is javascript code.
-                </div>
+            <div class="col-1 command">
+                <span onclick="PrintText(this)">
+                    &nbsp;
+                </span>
+            </div>
+            <div class="col-11 text" contenteditable="true">
+                This is javascript code.
             </div>
         </div>
         <div class="row">
-            <div class="col-x-1 command" onclick="Execute(this)">
-                <span class="fa fa-play">
+            <div class="col-1 command">
+                <span class="fa fa-play" onclick="Execute(this)">
                 </span>
             </div>
-            <div class="col-x-11 code" id="code1" contenteditable="true">
+            <div class="col-11 code" contenteditable="true">
                 alert('hi')
             </div>
         </div>
-        <div class="row">
-            <div class="command col-x-6">
-                <span class="fa fa-remove" onclick="Clearoutput(this)">
-
-                </span>
-            </div>
-            <div class="output col-x-6" id="output1">
-            </div>
-        </div>
-
+        
     </div>
 
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
