@@ -52,22 +52,71 @@
             {
                 row = code_ele.parentElement.parentElement.nextSibling;
                 row.children[1].innerText = eval_code_output;
-            }
-           
+            }           
+        }
+
+        var selected = null;
+
+        function Select(ele) {
+            selected = ele;
+        }
+
+        function Insert_Text() {
+
+            var text_template = document.getElementById('text_template').innerHTML;
+
+            var dom = new DOMParser();
+
+            var div = dom.parseFromString(text_template, 'text/html').firstChild.children[1].firstChild;
+
+            insertAfter(div, selected);
+        }
+        function Insert_Code() {
+            var code_template = document.getElementById('code_template').innerHTML;
+
+            var dom = new DOMParser();
+
+            var div = dom.parseFromString(code_template, 'text/html').firstChild.children[1].firstChild;
+
+            insertAfter(div, selected);
         }
         function DeleteCell() {
+
         }
         function Clearoutput(ele) {
             ele.innerHTML = "";
             console.log(ele);
         }
+
         var selected_cell = null;
+
         function Click_Up() {
+
         }
         function Click_Down() {
+
         }
         function Click_Plus() {
+
         }
+        window.onload = function () {
+            var toolbar = document.getElementById('toolbar');
+
+            var text_template = document.getElementById('text_template').innerHTML;
+
+            var dom = new DOMParser();
+
+            var div = dom.parseFromString(text_template, 'text/html').firstChild.children[1].firstChild;
+
+            insertAfter(div, toolbar);
+
+            var code_template = document.getElementById('code_template').innerHTML;
+
+            var div2 = dom.parseFromString(code_template, 'text/html').firstChild.children[1].firstChild;
+
+            insertAfter(div2, div);
+        };
+        
     </script>
 
     <style>
@@ -89,18 +138,40 @@
             margin: 3px;
         }
     </style>
+
+    <script type="text/html" id="text_template">
+        <div class="row" onclick="Select(this)">
+            <div class="col-1 command">
+                <span onclick="PrintText(this)">
+                    &nbsp;
+                </span>
+            </div>
+            <div class="col-11 text" contenteditable="true">
+            </div>
+        </div>
+    </script>
+
+    <script type="text/html" id="code_template">
+        <div class="row" onclick="Select(this)">
+            <div class="col-1 command">
+                <span class="fa fa-play" onclick="Execute(this)">
+                </span>
+            </div>
+            <div class="col-11 code" contenteditable="true">
+                alert('hi')
+            </div>
+        </div>
+    </script>
 </head>
-
-
 <body>
     <div class="container">
-        <div class="row">
+        <div class="row" id="toolbar">
             <div class="col-12">
                 <div class="btn-toolbar">
                     <div class="btn-group">
                         <button class="btn" data-original-title="Bold - Ctrl+B"><i class="fa fa-floppy-o"></i></button>
-                        <button class="btn" data-original-title="Italic - Ctrl+I"><i class="fa fa-plus"> Code</i></button>
-                        <button class="btn" data-original-title="Italic - Ctrl+I"><i class="fa fa-plus"> Text</i></button>
+                        <button class="btn" onclick="Insert_Code()" data-original-title="Italic - Ctrl+I"><i class="fa fa-plus"> Code</i></button>
+                        <button class="btn" onclick="Insert_Text()"  data-original-title="Italic - Ctrl+I"><i class="fa fa-plus"> Text</i></button>
 
                     </div>
                     <div class="btn-group">
@@ -110,28 +181,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-1 command">
-                <span onclick="PrintText(this)">
-                    &nbsp;
-                </span>
-            </div>
-            <div class="col-11 text" contenteditable="true">
-                This is javascript code.
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-1 command">
-                <span class="fa fa-play" onclick="Execute(this)">
-                </span>
-            </div>
-            <div class="col-11 code" contenteditable="true">
-                alert('hi')
-            </div>
-        </div>
-        
     </div>
-
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
 </body>
