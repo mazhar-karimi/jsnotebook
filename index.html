@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
     <script>
+
+        var selected_cell = null;
+
         function PrintText() {
 
         }
@@ -58,7 +61,18 @@
         var selected = null;
 
         function Select(ele) {
+            
+            var divs = document.getElementsByClassName('selected');
+
+            for (var i = 0; i < divs.length; i++) {
+                var div = divs[i];
+
+                div.classList.remove('selected');
+            }
+
+            ele.classList.add('selected');            
             selected = ele;
+
         }
 
         function Insert_Text() {
@@ -88,7 +102,7 @@
             console.log(ele);
         }
 
-        var selected_cell = null;
+        
 
         function Click_Up() {
 
@@ -137,6 +151,11 @@
         .btn {
             margin: 3px;
         }
+
+        .selected{
+            border-color: green;
+            border-width:1.5px;
+        }
     </style>
 
     <script type="text/html" id="text_template">
@@ -158,7 +177,7 @@
                 </span>
             </div>
             <div class="col-11 code" contenteditable="true">
-                alert('hi')
+                //CODE GOES HERE.
             </div>
         </div>
     </script>
