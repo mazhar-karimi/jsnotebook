@@ -26,7 +26,9 @@
 
 
             //!code_ele.parentElement.parentElement.nextSibling.classList.contains('output-div')
-            if (code_ele.parentElement.parentElement.nextSibling.classList == undefined) {
+            if (code_ele.parentElement.parentElement.nextSibling.classList == undefined ||
+                !code_ele.parentElement.parentElement.nextSibling.classList.contains('output')
+                ) {
                 row  = document.createElement('row');
                 row.classList.add('row')
                 row.classList.add('output-div')
