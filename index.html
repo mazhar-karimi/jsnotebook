@@ -4,12 +4,34 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script type="text/html" id="template_error">
+        <span class="error">{{ERROR}}</span>
+    </script>
 
+    <script type="text/html" id="template_output">
+        <div class="row col-11 offset-1 output-div">
+            <div class="command col-1">
+                <span class="fa fa-remove"></span>
+            </div>
+            <div class="output col-11">
+                {{OUTPUT}}
+            </div>
+        </div>
+    </script>
     <script>
 
         var selected_cell = null;
 
-        function PrintText() {
+        var reserved = ["abstract", "else", "instanceof", "super", "boolean", "enum", "int", "switch", "break", "export", "interface", "synchronized", "byte", "extends", "let", "this", "case", "false", "long", "throw", "catch", "final", "native", "throws", "char", "finally", "new", "transient", "class", "float", "null", "true", "const", "for", "package", "try", "continue", "function", "private", "typeof", "debugger", "goto", "protected", "var", "default", "if", "public", "void", "delete", "implements", "return", "volatile", "do", "import", "short", "while", "double", "in", "static", "with"];
+
+        function PrepareErrorHTML(error)
+        {
+            var template_error = document.getElementById('template_error').innerHTML;
+            return template_error.replace('{{ERROR}}', error.message);
+        }
+
+        function PrintText()
+        {
 
         }
 
@@ -18,52 +40,44 @@
         }
 
         function Execute(code_ele) {
-          
+
             var code = code_ele.parentElement.parentElement.children[1].innerText;
-            var eval_code_output = eval(code);             
+            var eval_code_output = null;
+
+            try {
+                eval_code_output = eval(code);
+            } catch (e) {
+                eval_code_output = PrepareErrorHTML(e);
+            }
+
+            if (eval_code_output == undefined) {
+                eval_code_output = "&nbsp;"
+            }
 
             var row = null;
 
+            if (code_ele.parentElement.parentElement.children[2] == undefined) {
 
-            //!code_ele.parentElement.parentElement.nextSibling.classList.contains('output-div')
-            if (code_ele.parentElement.parentElement.nextSibling.classList == undefined ||
-                !code_ele.parentElement.parentElement.nextSibling.classList.contains('output')
-                ) {
-                row  = document.createElement('row');
-                row.classList.add('row')
-                row.classList.add('output-div')
+                var dom = new DOMParser();
 
-                var div1 = document.createElement('div');
-                div1.classList.add('command');
-                div1.classList.add('col-6');
+                var template_output = document.getElementById('template_output').innerHTML.replace('{{OUTPUT}}', eval_code_output);
 
-                var span1 = document.createElement('span');
-                span1.classList.add('fa');
-                span1.classList.add('fa-remove');
-                span1.onclick = Clearoutput(this);
+                row = dom.parseFromString(template_output, 'text/html').firstChild.children[1].firstChild;
 
-                div1.appendChild(span1);
-                row.appendChild(div1);
-
-                var div2 = document.createElement('div');
-                div2.classList.add('output');
-                div2.classList.add('col-6');
-                div2.innerText = eval_code_output;
-                row.appendChild(div2);
-
-                insertAfter(row, code_ele.parentElement.parentElement);
+                insertAfter(row, code_ele.parentElement.parentElement.children[1]);
             }
-            else
-            {
-                row = code_ele.parentElement.parentElement.nextSibling;
-                row.children[1].innerText = eval_code_output;
-            }           
+            else {
+                row = code_ele.parentElement.parentElement.children[2].children[1];
+                row.innerHTML = eval_code_output;
+            }
+            Select(row);
         }
+
 
         var selected = null;
 
         function Select(ele) {
-            
+
             var divs = document.getElementsByClassName('selected');
 
             for (var i = 0; i < divs.length; i++) {
@@ -72,11 +86,11 @@
                 div.classList.remove('selected');
             }
 
-            ele.classList.add('selected');            
+            ele.classList.add('selected');
             selected = ele;
 
         }
-
+        //todo: agar insert per akhri dive output hay tu baad may add karo.
         function Insert_Text() {
 
             var text_template = document.getElementById('text_template').innerHTML;
@@ -86,6 +100,8 @@
             var div = dom.parseFromString(text_template, 'text/html').firstChild.children[1].firstChild;
 
             insertAfter(div, selected);
+
+            Select(div);
         }
         function Insert_Code() {
             var code_template = document.getElementById('code_template').innerHTML;
@@ -95,6 +111,8 @@
             var div = dom.parseFromString(code_template, 'text/html').firstChild.children[1].firstChild;
 
             insertAfter(div, selected);
+
+            Select(div);
         }
         function DeleteCell() {
 
@@ -104,7 +122,7 @@
             console.log(ele);
         }
 
-        
+
 
         function Click_Up() {
 
@@ -132,7 +150,7 @@
 
             insertAfter(div2, div);
         };
-        
+
     </script>
 
     <style>
@@ -154,9 +172,13 @@
             margin: 3px;
         }
 
-        .selected{
+        .selected {
             border-color: green;
-            border-width:1.5px;
+            border-width: 1.5px;
+        }
+
+        .error {
+            color: red;
         }
     </style>
 
@@ -179,7 +201,7 @@
                 </span>
             </div>
             <div class="col-11 code" contenteditable="true">
-                //CODE GOES HERE.
+
             </div>
         </div>
     </script>
@@ -192,7 +214,7 @@
                     <div class="btn-group">
                         <button class="btn" data-original-title="Bold - Ctrl+B"><i class="fa fa-floppy-o"></i></button>
                         <button class="btn" onclick="Insert_Code()" data-original-title="Italic - Ctrl+I"><i class="fa fa-plus"> Code</i></button>
-                        <button class="btn" onclick="Insert_Text()"  data-original-title="Italic - Ctrl+I"><i class="fa fa-plus"> Text</i></button>
+                        <button class="btn" onclick="Insert_Text()" data-original-title="Italic - Ctrl+I"><i class="fa fa-plus"> Text</i></button>
 
                     </div>
                     <div class="btn-group">
