@@ -4,10 +4,65 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <style>
+        .code {
+            min-height: 40px;
+            border: solid 1px orange;
+            font-size: 18px;
+            font-family: sans-serif;
+            width: 100%;
+            background-color: #f2f7ff;
+        }
+
+        .text {
+            border: 0.5px solid gray;
+            width: 100%;
+            font-size: 32px;
+        }
+
+        .btn {
+            margin: 3px;
+        }
+
+        .selected {
+            border-color: green;
+            border-width: 1.5px;
+            border: 1px solid;
+            padding: 10px;
+            box-shadow: 5px 10px #888888;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+
     <script type="text/html" id="template_error">
         <span class="error">{{ERROR}}</span>
     </script>
+    <script type="text/html" id="text_template">
+        <div class="row" onclick="Select(this)">
+            <div class="col-1 command">
+                <span onclick="PrintText(this)">
+                    &nbsp;
+                </span>
+            </div>
+            <div class="col-11 text" contenteditable="true">
+            </div>
+        </div>
+    </script>
+    <script type="text/html" id="code_template">
+        <div class="row" onclick="Select(this)" onkeyup="Code_KeyUp(this)">
+            <div class="col-1 command">
+                <span class="fa fa-play" onclick="Execute(this)">
+                </span>
+            </div>
+            <div class="col-11 code" contenteditable="true">
 
+            </div>
+        </div>
+    </script>
     <script type="text/html" id="template_output">
         <div class="row col-11 offset-1 output-div">
             <div class="command col-1">
@@ -18,8 +73,8 @@
             </div>
         </div>
     </script>
-    <script>
 
+    <script>
         var selected_cell = null;
 
         var reserved = ["abstract", "else", "instanceof", "super", "boolean", "enum", "int", "switch", "break", "export", "interface", "synchronized", "byte", "extends", "let", "this", "case", "false", "long", "throw", "catch", "final", "native", "throws", "char", "finally", "new", "transient", "class", "float", "null", "true", "const", "for", "package", "try", "continue", "function", "private", "typeof", "debugger", "goto", "protected", "var", "default", "if", "public", "void", "delete", "implements", "return", "volatile", "do", "import", "short", "while", "double", "in", "static", "with"];
@@ -73,36 +128,30 @@
             Select(row);
         }
 
-
         var selected = null;
 
         function Select(ele) {
 
             var divs = document.getElementsByClassName('selected');
-
             for (var i = 0; i < divs.length; i++) {
                 var div = divs[i];
-
                 div.classList.remove('selected');
             }
 
             ele.classList.add('selected');
             selected = ele;
-
         }
-        //todo: agar insert per akhri dive output hay tu baad may add karo.
+       
         function Insert_Text() {
 
             var text_template = document.getElementById('text_template').innerHTML;
-
             var dom = new DOMParser();
-
             var div = dom.parseFromString(text_template, 'text/html').firstChild.children[1].firstChild;
-
             insertAfter(div, selected);
 
             Select(div);
         }
+        
         function Insert_Code() {
             var code_template = document.getElementById('code_template').innerHTML;
 
@@ -121,17 +170,23 @@
             ele.innerHTML = "";
             console.log(ele);
         }
-
-
-
         function Click_Up() {
-
         }
         function Click_Down() {
-
         }
-        function Click_Plus() {
 
+        var previous_key = null;
+        function Code_KeyUp(codediv)
+        {
+            console.log(event.key);
+
+            if (previous_key != null)
+            {
+                if (previous_key == "{" && event.key == "Enter") {
+
+                }
+            }
+            previous_key = event.key;
         }
         window.onload = function () {
             var toolbar = document.getElementById('toolbar');
@@ -149,61 +204,8 @@
             var div2 = dom.parseFromString(code_template, 'text/html').firstChild.children[1].firstChild;
 
             insertAfter(div2, div);
-        };
+        };       
 
-    </script>
-
-    <style>
-        .code {
-            min-height: 40px;
-            border: solid 1px orange;
-            font-size: 18px;
-            font-family: sans-serif;
-            width: 100%;
-        }
-
-        .text {
-            border: 0.5px solid gray;
-            width: 100%;
-            font-size: 32px;
-        }
-
-        .btn {
-            margin: 3px;
-        }
-
-        .selected {
-            border-color: green;
-            border-width: 1.5px;
-        }
-
-        .error {
-            color: red;
-        }
-    </style>
-
-    <script type="text/html" id="text_template">
-        <div class="row" onclick="Select(this)">
-            <div class="col-1 command">
-                <span onclick="PrintText(this)">
-                    &nbsp;
-                </span>
-            </div>
-            <div class="col-11 text" contenteditable="true">
-            </div>
-        </div>
-    </script>
-
-    <script type="text/html" id="code_template">
-        <div class="row" onclick="Select(this)">
-            <div class="col-1 command">
-                <span class="fa fa-play" onclick="Execute(this)">
-                </span>
-            </div>
-            <div class="col-11 code" contenteditable="true">
-
-            </div>
-        </div>
     </script>
 </head>
 <body>
