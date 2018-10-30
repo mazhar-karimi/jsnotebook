@@ -53,14 +53,14 @@
         </div>
     </script>
     <script type="text/html" id="code_template">
-        <div class="row" onclick="Select(this)" onkeyup="Code_KeyUp(this)">
+        <div class="row" onclick="Select(this)" >
             <div class="col-1 command">
                 <span class="fa fa-play" onclick="Execute(this)">
                 </span>
             </div>
-            <div class="col-11 code" contenteditable="true">
+            <pre class="col-11 code" onkeypress="Code_KeyUp(this)" contenteditable="true" >
 
-            </div>
+            </pre>
         </div>
     </script>
     <script type="text/html" id="template_output">
@@ -73,8 +73,8 @@
             </div>
         </div>
     </script>
-
     <script>
+
         var selected_cell = null;
 
         var reserved = ["abstract", "else", "instanceof", "super", "boolean", "enum", "int", "switch", "break", "export", "interface", "synchronized", "byte", "extends", "let", "this", "case", "false", "long", "throw", "catch", "final", "native", "throws", "char", "finally", "new", "transient", "class", "float", "null", "true", "const", "for", "package", "try", "continue", "function", "private", "typeof", "debugger", "goto", "protected", "var", "default", "if", "public", "void", "delete", "implements", "return", "volatile", "do", "import", "short", "while", "double", "in", "static", "with"];
@@ -90,12 +90,13 @@
 
         }
 
-        function insertAfter(el, referenceNode) {
+        function insertAfter(el, referenceNode)
+        {
             referenceNode.parentNode.insertBefore(el, referenceNode.nextSibling);
         }
 
-        function Execute(code_ele) {
-
+        function Execute(code_ele)
+        {
             var code = code_ele.parentElement.parentElement.children[1].innerText;
             var eval_code_output = null;
 
@@ -111,8 +112,8 @@
 
             var row = null;
 
-            if (code_ele.parentElement.parentElement.children[2] == undefined) {
-
+            if (code_ele.parentElement.parentElement.children[2] == undefined)
+            {
                 var dom = new DOMParser();
 
                 var template_output = document.getElementById('template_output').innerHTML.replace('{{OUTPUT}}', eval_code_output);
@@ -121,17 +122,19 @@
 
                 insertAfter(row, code_ele.parentElement.parentElement.children[1]);
             }
-            else {
+            else
+            {
                 row = code_ele.parentElement.parentElement.children[2].children[1];
                 row.innerHTML = eval_code_output;
             }
+
             Select(row);
         }
 
         var selected = null;
 
-        function Select(ele) {
-
+        function Select(ele)
+        {
             var divs = document.getElementsByClassName('selected');
             for (var i = 0; i < divs.length; i++) {
                 var div = divs[i];
@@ -176,17 +179,45 @@
         }
 
         var previous_key = null;
+        const indent_repeat_count = 4;
+
+        function GetLastChar(text) {
+            text = String(text);
+            return text.charAt(text.length - 1);
+        }
+
         function Code_KeyUp(codediv)
         {
             console.log(event.key);
+            var lastChar = GetLastChar(codediv.innerText);
 
-            if (previous_key != null)
+            if (lastChar == '{')
             {
-                if (previous_key == "{" && event.key == "Enter") {
+                var e = event;
+                e.preventDefault();
+                var caret = e.target.selectionStart;
+                e.target.value = e.target.value.substring(0, caret) + '\t' + e.target.value.substring(caret);
 
-                }
+                //codediv.innerText += "{\n\u00A0\u00A0\u00A0\u00A0";
             }
-            previous_key = event.key;
+
+            //if (previous_key != null)
+            //{
+            //    if (previous_key == "{" && event.key == "Enter") {
+                    
+            //        var indent = function () {
+            //            var temp = "";
+            //            for (var i = 0; i < indent_repeat_count; i++) {
+            //                temp += " ";
+            //            }
+            //            return temp;
+            //        };
+
+            //        codediv.innerHTML += indent() + ";";
+            //    }
+            //}
+
+            //previous_key = event.key;
         }
         window.onload = function () {
             var toolbar = document.getElementById('toolbar');
